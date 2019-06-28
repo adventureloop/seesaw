@@ -35,9 +35,7 @@ LDFLAGS= $(COMMON_FLAGS) \
 --specs=nano.specs --specs=nosys.specs
 BUILD_PATH=build/$(BOARD)
 
-QPPORT = lib/qp/ports/arm-cm/qxk/gnu
-
-INCLUDES = -I. -I./include -I./include/USB -I./bsp -I./lib/qp/extras -I./lib/qp/include -I./lib/qp/source -I$(QPPORT)
+INCLUDES = -I. -I./include -I./include/USB -I./bsp 
 INCLUDES += -I./boards/$(BOARD) -Ilib/cmsis/CMSIS/Include
 INCLUDES += -I$(BUILD_PATH)
 
@@ -63,7 +61,8 @@ endif
 
 ifeq ($(CHIP_FAMILY), SAMD09)
 CSOURCES = Device_Startup/startup_samd09.c \
-	Device_Startup/system_samd09.c
+	Device_Startup/system_samd09.c \
+	main.c
 endif
 
 ifeq ($(CHIP_FAMILY), SAMD10)
@@ -127,16 +126,16 @@ FULL_SOURCES = $(SOURCES) \
 endif
 
 ifeq ($(CHIP_FAMILY), SAMD09)
-FULL_SOURCES = $(SOURCES)
+FULL_SOURCES = main.c
 endif
 
 ifeq ($(CHIP_FAMILY), SAMD10)
 FULL_SOURCES = $(SOURCES)
 endif
 
-SOBJECTS = $(patsubst %.S,$(BUILD_PATH)/%.o,$(SSOURCES))
+#SOBJECTS = $(patsubst %.S,$(BUILD_PATH)/%.o,$(SSOURCES))
 COBJECTS = $(patsubst %.c,$(BUILD_PATH)/%.o,$(CSOURCES))
-OBJECTS = $(patsubst %.cpp,$(BUILD_PATH)/%.o,$(FULL_SOURCES))
+#OBJECTS = $(patsubst %.cpp,$(BUILD_PATH)/%.o,$(FULL_SOURCES))
 
 NAME=seesaw-$(BOARD)
 EXECUTABLE=$(BUILD_PATH)/$(NAME).bin
@@ -145,7 +144,7 @@ all: dirs $(EXECUTABLE)
 
 dirs:
 	@echo "Building $(BOARD)"
-	@python scripts/datecode.py
+	@python3 scripts/datecode.py
 	-@mkdir -p $(BUILD_PATH)
 	-@mkdir -p $(BUILD_PATH)/lib/qp/source
 	-@mkdir -p $(BUILD_PATH)/lib/qp/include
